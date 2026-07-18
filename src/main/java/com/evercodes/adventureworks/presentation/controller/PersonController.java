@@ -55,4 +55,14 @@ public class PersonController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Result<PersonResponse>> update(@PathVariable Integer id,
+                                                         @Valid @RequestBody PersonRequest request) {
+        Result<PersonResponse> result = personService.update(id, request);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
 }

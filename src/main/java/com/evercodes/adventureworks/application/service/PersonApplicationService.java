@@ -74,6 +74,23 @@ public class PersonApplicationService {
                 .orElse(Result.notFound("Person not found with id: " + id));
     }
 
+    @Transactional
+    public Result<PersonResponse> update(Integer id, PersonRequest request) {
+        return personRepository.findById(id)
+                .map(person -> {
+                    person.setPersonType(request.getPersonType());
+                    person.setTitle(request.getTitle());
+                    person.setFirstName(request.getFirstName());
+                    person.setMiddleName(request.getMiddleName());
+                    person.setLastName(request.getLastName());
+                    person.setSuffix(request.getSuffix());
+
+                    Person saved = personRepository.save(person);
+                    return Result.success(toResponse(saved), "Person updated successfully");
+                })
+                .orElse(Result.notFound("Person not found with id: " + id));
+    }
+
     private PersonResponse toResponse(Person person) {
         PersonResponse response = new PersonResponse();
         response.setBusinessEntityId(person.getBusinessEntityId());
