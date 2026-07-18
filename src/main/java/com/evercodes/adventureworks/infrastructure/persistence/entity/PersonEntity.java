@@ -1,9 +1,7 @@
 package com.evercodes.adventureworks.infrastructure.persistence.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.evercodes.adventureworks.domain.model.PersonType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,8 +17,9 @@ public class PersonEntity {
     @Column(name = "BusinessEntityID")
     private Integer businessEntityId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "PersonType", columnDefinition = "nchar(2)")
-    private String personType;
+    private PersonType personType;
 
     @Column(name = "NameStyle", columnDefinition = "bit")
     private boolean nameStyle;

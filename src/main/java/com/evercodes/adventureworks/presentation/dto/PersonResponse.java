@@ -1,5 +1,6 @@
-package com.evercodes.adventureworks.domain.model;
+package com.evercodes.adventureworks.presentation.dto;
 
+import com.evercodes.adventureworks.domain.model.PersonType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,15 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Person {
+public class PersonResponse {
 
     private Integer businessEntityId;
     private PersonType personType;
-    private boolean nameStyle;
     private String title;
     private String firstName;
     private String middleName;
     private String lastName;
     private String suffix;
-    private int emailPromotion;
 }
