@@ -1,7 +1,9 @@
 package com.evercodes.adventureworks.application.service;
 
+import com.evercodes.adventureworks.application.dto.Result;
 import com.evercodes.adventureworks.domain.model.BusinessEntity;
 import com.evercodes.adventureworks.domain.model.Person;
+import com.evercodes.adventureworks.domain.model.PersonType;
 import com.evercodes.adventureworks.domain.repository.BusinessEntityRepository;
 import com.evercodes.adventureworks.domain.repository.PersonRepository;
 import com.evercodes.adventureworks.presentation.dto.PersonRequest;
@@ -9,6 +11,7 @@ import com.evercodes.adventureworks.presentation.dto.PersonResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -23,20 +26,30 @@ public class PersonApplicationService {
         this.businessEntityRepository = businessEntityRepository;
     }
 
-    public List<PersonResponse> findAll() {
-        return personRepository.findAll().stream()
+    public Result<List<PersonResponse>> findAll() {
+        List<PersonResponse> persons = personRepository.findAll().stream()
                 .map(this::toResponse)
                 .toList();
+        return Result.success(persons);
     }
 
-    public PersonResponse findById(Integer id) {
-        Person person = personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Person not found with id: " + id));
-        return toResponse(person);
+    public Result<PersonResponse> findById(Integer id) {
+        return personRepository.findById(id)
+                .map(person -> Result.success(toResponse(person)))
+                .orElse(Result.notFound("Person not found with id: " + id));
     }
 
     @Transactional
-    public PersonResponse save(PersonRequest request) {
+    public Result<PersonResponse> save(PersonRequest request) {
+       
+        boolean isValid = Arrays.stream(PersonType.values())
+                .anyMatch(type -> type == request.getPersonType());
+
+        if (!isValid) {
+            String validTypes = Arrays.toString(PersonType.values());
+            return Result.error("PersonType must be one of: " + validTypes);
+        }
+
         BusinessEntity businessEntity = businessEntityRepository.save(new BusinessEntity());
 
         Person person = new Person();
@@ -49,11 +62,16 @@ public class PersonApplicationService {
         person.setSuffix(request.getSuffix());
 
         Person saved = personRepository.save(person);
-        return toResponse(saved);
+        return Result.success(toResponse(saved), "Person created successfully");
     }
 
-    public void deleteById(Integer id) {
-        personRepository.deleteById(id);
+    public Result<Void> deleteById(Integer id) {
+        return personRepository.findById(id)
+                .map(person -> {
+                    personRepository.deleteById(id);
+                    return Result.<Void>success(null, "Person deleted successfully");
+                })
+                .orElse(Result.notFound("Person not found with id: " + id));
     }
 
     private PersonResponse toResponse(Person person) {

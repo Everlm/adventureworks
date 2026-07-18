@@ -1,5 +1,6 @@
 package com.evercodes.adventureworks.presentation.controller;
 
+import com.evercodes.adventureworks.application.dto.Result;
 import com.evercodes.adventureworks.application.service.PersonApplicationService;
 import com.evercodes.adventureworks.presentation.dto.PersonRequest;
 import com.evercodes.adventureworks.presentation.dto.PersonResponse;
@@ -21,23 +22,37 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonResponse>> findAll() {
-        return ResponseEntity.ok(personService.findAll());
+    public ResponseEntity<Result<List<PersonResponse>>> findAll() {
+        Result<List<PersonResponse>> result = personService.findAll();
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonResponse> findById(@PathVariable Integer id) {
-        return ResponseEntity.ok(personService.findById(id));
+    public ResponseEntity<Result<PersonResponse>> findById(@PathVariable Integer id) {
+        Result<PersonResponse> result = personService.findById(id);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
     }
 
     @PostMapping
-    public ResponseEntity<PersonResponse> save(@Valid @RequestBody PersonRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(personService.save(request));
+    public ResponseEntity<Result<PersonResponse>> save(@Valid @RequestBody PersonRequest request) {
+        
+        Result<PersonResponse> result = personService.save(request);
+        
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        }
+        return ResponseEntity.badRequest().body(result);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-        personService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Result<Void>> deleteById(@PathVariable Integer id) {
+        Result<Void> result = personService.deleteById(id);
+        if (result.isSuccess()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
     }
 }
