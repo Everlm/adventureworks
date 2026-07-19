@@ -1,12 +1,12 @@
 package com.evercodes.adventureworks.application.service;
 
 import br.com.fluentvalidator.Validator;
-import br.com.fluentvalidator.context.ValidationResult;
+import lombok.RequiredArgsConstructor;
+
 import com.evercodes.adventureworks.application.commons.Result;
 import com.evercodes.adventureworks.application.mapper.PersonMapper;
 import com.evercodes.adventureworks.application.validator.PersonValidator;
 import com.evercodes.adventureworks.domain.model.BusinessEntity;
-import com.evercodes.adventureworks.domain.model.Person;
 import com.evercodes.adventureworks.domain.repository.BusinessEntityRepository;
 import com.evercodes.adventureworks.domain.repository.PersonRepository;
 import com.evercodes.adventureworks.presentation.dto.PersonRequest;
@@ -18,82 +18,107 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PersonApplicationService {
+// @RequiredArgsConstructor
+public class PersonApplicationService 
+{
 
     private final PersonRepository personRepository;
     private final BusinessEntityRepository businessEntityRepository;
     private final PersonMapper personMapper;
-    private final Validator<PersonRequest> personValidator;
+    private final PersonValidator personValidator;
 
-    public PersonApplicationService(PersonRepository personRepository,
-                                     BusinessEntityRepository businessEntityRepository) {
+    public PersonApplicationService(PersonRepository personRepository, BusinessEntityRepository businessEntityRepository, PersonMapper personMapper,
+        PersonValidator personValidator) 
+    {
         this.personRepository = personRepository;
         this.businessEntityRepository = businessEntityRepository;
-        this.personMapper = PersonMapper.INSTANCE;
-        this.personValidator = new PersonValidator();
+        this.personMapper = personMapper;
+        this.personValidator = personValidator;
     }
 
-    public Result<List<PersonResponse>> findAll() {
-        List<PersonResponse> persons = personRepository.findAll().stream()
-                .map(personMapper::toResponse)
-                .toList();
-        return Result.Success(persons, persons.size());
+    public Result<List<PersonResponse>> findAll() 
+    {
+        var persons = personRepository.findAll(200);
+        var response = personMapper.toResponseList(persons);
+        return Result.Success(response, response.size());
     }
 
-    public Result<PersonResponse> findById(Integer id) {
-        return personRepository.findById(id)
-                .map(person -> Result.Success(personMapper.toResponse(person)))
-                .orElse(Result.NotFound("Person not found with id: " + id));
+    public Result<PersonResponse> findById(Integer id) 
+    {    
+        var person = personRepository.findById(id);
+
+        if (person.isEmpty()) {
+            return Result.NotFound("Person not found with id: " + id);
+        }
+
+        var response = personMapper.toResponse(person.get());
+        return Result.Success(response);
     }
 
     @Transactional
-    public Result<PersonResponse> save(PersonRequest request) {
-
-        ValidationResult validationResult = personValidator.validate(request);
+    public Result<PersonResponse> save(PersonRequest request) 
+    {
+        var validationResult = personValidator.validate(request);
 
         if (!validationResult.isValid()) {
-            List<String> errors = validationResult.getErrors().stream()
+            
+            var errors = validationResult.getErrors().stream()
                     .map(error -> error.getField() + ": " + error.getMessage())
                     .collect(Collectors.toList());
+
             return Result.ValidationError("Validation failed", errors);
         }
 
-        BusinessEntity businessEntity = businessEntityRepository.save(new BusinessEntity());
+        var businessEntity = businessEntityRepository.save(new BusinessEntity());
 
-        Person person = personMapper.toDomain(request);
+        var person = personMapper.toDomain(request);
+
         person.setBusinessEntityId(businessEntity.getBusinessEntityId());
 
-        Person saved = personRepository.save(person);
+        var saved = personRepository.save(person);
         return Result.Success(personMapper.toResponse(saved));
     }
 
-    public Result<Void> deleteById(Integer id) {
-        return personRepository.findById(id)
-                .map(person -> {
-                    personRepository.deleteById(id);
-                    return Result.<Void>NoContent("Person deleted successfully");
-                })
-                .orElse(Result.NotFound("Person not found with id: " + id));
-    }
-
     @Transactional
-    public Result<PersonResponse> update(Integer id, PersonRequest request) {
-
-        ValidationResult validationResult = personValidator.validate(request);
+    public Result<PersonResponse> update(Integer id, PersonRequest request) 
+    {
+        var validationResult = personValidator.validate(request);
 
         if (!validationResult.isValid()) {
-            List<String> errors = validationResult.getErrors().stream()
+            
+            var errors = validationResult.getErrors().stream()
                     .map(error -> error.getField() + ": " + error.getMessage())
                     .collect(Collectors.toList());
+            
             return Result.ValidationError("Validation failed", errors);
         }
 
-        return personRepository.findById(id)
-                .map(person -> {
-                    personMapper.updateDomainFromRequest(request, person);
-                    Person saved = personRepository.save(person);
-                    return Result.Success(personMapper.toResponse(saved));
-                })
-                .orElse(Result.NotFound("Person not found with id: " + id));
+        var person = personRepository.findById(id);
+
+        if (person.isEmpty()) {
+            return Result.NotFound("Person not found with id: " + id);
+        }
+
+        personMapper.updateDomainFromRequest(request, person.get());
+
+        var savedPerson = personRepository.save(person.get());
+        var response = personMapper.toResponse(savedPerson);
+
+        return Result.Success(response);
     }
+
+    public Result<Void> deleteById(Integer id) 
+    {    
+        var person = personRepository.findById(id);
+
+        if (person.isEmpty()) {
+            return Result.NotFound("Person not found with id: " + id);
+        }
+
+        personRepository.deleteById(id);
+
+        return Result.NoContent("Person deleted successfully");
+    }
+
+   
 }

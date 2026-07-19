@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface PersonRepository {
 
-    List<Person> findAll();
+    List<Person> findAll(int limit);
 
     Optional<Person> findById(Integer id);
 

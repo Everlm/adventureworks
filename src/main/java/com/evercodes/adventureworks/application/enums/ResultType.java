@@ -1,6 +1,7 @@
 package com.evercodes.adventureworks.application.enums;
 
-public enum ResultType {
+public enum ResultType 
+{
     Success,
     NotFound,
     NoContent,

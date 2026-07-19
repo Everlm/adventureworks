@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonRequest {
-
+public class PersonRequest 
+{
     private PersonType personType;
 
     private String title;

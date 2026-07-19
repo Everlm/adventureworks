@@ -7,6 +7,7 @@ import com.evercodes.adventureworks.infrastructure.persistence.mapper.PersonEnti
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
 import java.util.Optional;
 
 @Repository
@@ -21,8 +22,8 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public List<Person> findAll() {
-        return jpaRepository.findAll().stream()
+    public List<Person> findAll(int limit) {
+        return jpaRepository.findAll(PageRequest.of(0, limit)).stream()
                 .map(personEntityMapper::toDomain)
                 .toList();
     }

@@ -7,28 +7,29 @@ import static br.com.fluentvalidator.predicate.LogicalPredicate.not;
 import static br.com.fluentvalidator.predicate.ObjectPredicate.nullValue;
 import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;
 
-public class PersonValidator extends AbstractValidator<PersonRequest> {
+import org.springframework.stereotype.Component;
 
+@Component
+public class PersonValidator extends AbstractValidator<PersonRequest> 
+{
     @Override
-    public void rules() {
+    public void rules() 
+    {
 
-        ruleFor(PersonRequest::getPersonType)
+        ruleFor(request -> request.getPersonType())
                 .must(not(nullValue()))
-                .when(not(nullValue()))
                 .withMessage("PersonType is required")
                 .withFieldName("personType")
                 .critical();
 
-        ruleFor(PersonRequest::getFirstName)
+        ruleFor(request -> request.getFirstName())
                 .must(not(stringEmptyOrNull()))
-                .when(not(nullValue()))
                 .withMessage("FirstName is required")
                 .withFieldName("firstName")
                 .critical();
 
-        ruleFor(PersonRequest::getLastName)
+        ruleFor(request -> request.getLastName())
                 .must(not(stringEmptyOrNull()))
-                .when(not(nullValue()))
                 .withMessage("LastName is required")
                 .withFieldName("lastName")
                 .critical();

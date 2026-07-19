@@ -6,7 +6,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Result<T> {
+public class Result<T> 
+{
 
     private boolean esExito;
     private T datos;
@@ -15,10 +16,12 @@ public class Result<T> {
     private List<String> errores;
     private ResultType tipo;
 
-    private Result() {
+    private Result() 
+    {
     }
 
-    public static <T> Result<T> Success(T datos, int registrosTotales) {
+    public static <T> Result<T> Success(T datos, int registrosTotales) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(true);
         result.setDatos(datos);
@@ -27,11 +30,13 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> Success(T datos) {
+    public static <T> Result<T> Success(T datos) 
+    {
         return Success(datos, 0);
     }
 
-    public static <T> Result<T> Success(T datos, String mensaje) {
+    public static <T> Result<T> Success(T datos, String mensaje) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(true);
         result.setDatos(datos);
@@ -40,7 +45,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> NotFound(String mensajeError) {
+    public static <T> Result<T> NotFound(String mensajeError) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);
@@ -48,7 +54,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> BadRequest(String mensajeError) {
+    public static <T> Result<T> BadRequest(String mensajeError) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);
@@ -56,7 +63,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> Invalid(String mensajeError) {
+    public static <T> Result<T> Invalid(String mensajeError) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);
@@ -64,7 +72,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> ValidationError(String mensajeError, List<String> errores) {
+    public static <T> Result<T> ValidationError(String mensajeError, List<String> errores) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);
@@ -73,7 +82,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> Error(String mensajeError) {
+    public static <T> Result<T> Error(String mensajeError) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);
@@ -81,7 +91,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> NoContent(String mensaje) {
+    public static <T> Result<T> NoContent(String mensaje) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(true);
         result.setTipo(ResultType.NoContent);
@@ -91,7 +102,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> Unauthorized(String mensajeError) {
+    public static <T> Result<T> Unauthorized(String mensajeError) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);
@@ -99,7 +111,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> Forbidden(String mensajeError) {
+    public static <T> Result<T> Forbidden(String mensajeError) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);
@@ -107,7 +120,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> Conflict(String mensajeError) {
+    public static <T> Result<T> Conflict(String mensajeError) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);
@@ -115,7 +129,8 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> ServiceUnavailable(String mensajeError) {
+    public static <T> Result<T> ServiceUnavailable(String mensajeError) 
+    {
         Result<T> result = new Result<>();
         result.setEsExito(false);
         result.setMensajeError(mensajeError);

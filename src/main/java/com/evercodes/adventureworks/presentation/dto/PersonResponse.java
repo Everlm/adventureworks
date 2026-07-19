@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonResponse {
+public class PersonResponse 
+{
 
     private Integer businessEntityId;
     private PersonType personType;
