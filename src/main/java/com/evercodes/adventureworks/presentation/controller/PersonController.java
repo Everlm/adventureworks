@@ -1,6 +1,8 @@
 package com.evercodes.adventureworks.presentation.controller;
 
+import com.evercodes.adventureworks.application.dto.CreatePersonCommand;
 import com.evercodes.adventureworks.application.dto.Result;
+import com.evercodes.adventureworks.application.dto.UpdatePersonCommand;
 import com.evercodes.adventureworks.application.service.PersonApplicationService;
 import com.evercodes.adventureworks.presentation.dto.PersonRequest;
 import com.evercodes.adventureworks.presentation.dto.PersonResponse;
@@ -38,9 +40,17 @@ public class PersonController {
 
     @PostMapping
     public ResponseEntity<Result<PersonResponse>> save(@Valid @RequestBody PersonRequest request) {
-        
-        Result<PersonResponse> result = personService.save(request);
-        
+        CreatePersonCommand command = new CreatePersonCommand(
+                request.getPersonType(),
+                request.getTitle(),
+                request.getFirstName(),
+                request.getMiddleName(),
+                request.getLastName(),
+                request.getSuffix()
+        );
+
+        Result<PersonResponse> result = personService.save(command);
+
         if (result.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }
@@ -59,7 +69,16 @@ public class PersonController {
     @PutMapping("/{id}")
     public ResponseEntity<Result<PersonResponse>> update(@PathVariable Integer id,
                                                          @Valid @RequestBody PersonRequest request) {
-        Result<PersonResponse> result = personService.update(id, request);
+        UpdatePersonCommand command = new UpdatePersonCommand(
+                request.getPersonType(),
+                request.getTitle(),
+                request.getFirstName(),
+                request.getMiddleName(),
+                request.getLastName(),
+                request.getSuffix()
+        );
+
+        Result<PersonResponse> result = personService.update(id, command);
         if (result.isSuccess()) {
             return ResponseEntity.ok(result);
         }
