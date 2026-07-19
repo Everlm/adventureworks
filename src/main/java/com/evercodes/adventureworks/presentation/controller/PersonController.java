@@ -5,7 +5,6 @@ import com.evercodes.adventureworks.application.service.PersonApplicationService
 import com.evercodes.adventureworks.infrastructure.web.ResultExtensions;
 import com.evercodes.adventureworks.presentation.dto.PersonRequest;
 import com.evercodes.adventureworks.presentation.dto.PersonResponse;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +31,7 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<Result<PersonResponse>> save(@Valid @RequestBody PersonRequest request) {
+    public ResponseEntity<Result<PersonResponse>> save(@RequestBody PersonRequest request) {
         return ResultExtensions.toResponseEntity(personService.save(request));
     }
 
@@ -43,7 +42,7 @@ public class PersonController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Result<PersonResponse>> update(@PathVariable Integer id,
-                                                         @Valid @RequestBody PersonRequest request) {
+                                                         @RequestBody PersonRequest request) {
         return ResultExtensions.toResponseEntity(personService.update(id, request));
     }
 }
