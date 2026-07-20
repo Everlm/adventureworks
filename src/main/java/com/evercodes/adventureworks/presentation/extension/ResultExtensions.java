@@ -1,4 +1,4 @@
-package com.evercodes.adventureworks.infrastructure.web;
+package com.evercodes.adventureworks.presentation.extension;
 
 import com.evercodes.adventureworks.application.commons.Result;
 import org.springframework.http.HttpStatus;

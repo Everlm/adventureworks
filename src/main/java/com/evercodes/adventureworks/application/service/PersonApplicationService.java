@@ -9,8 +9,8 @@ import com.evercodes.adventureworks.application.validator.PersonValidator;
 import com.evercodes.adventureworks.domain.model.BusinessEntity;
 import com.evercodes.adventureworks.domain.repository.BusinessEntityRepository;
 import com.evercodes.adventureworks.domain.repository.PersonRepository;
-import com.evercodes.adventureworks.presentation.dto.PersonRequest;
-import com.evercodes.adventureworks.presentation.dto.PersonResponse;
+import com.evercodes.adventureworks.application.dto.PersonRequest;
+import com.evercodes.adventureworks.application.dto.PersonResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

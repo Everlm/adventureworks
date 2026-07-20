@@ -1,6 +1,7 @@
-package com.evercodes.adventureworks.infrastructure.web;
+package com.evercodes.adventureworks.presentation.exception;
 
 import com.evercodes.adventureworks.application.commons.Result;
+import com.evercodes.adventureworks.presentation.extension.ResultExtensions;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

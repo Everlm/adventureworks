@@ -1,8 +1,8 @@
 package com.evercodes.adventureworks.application.mapper;
 
 import com.evercodes.adventureworks.domain.model.Person;
-import com.evercodes.adventureworks.presentation.dto.PersonRequest;
-import com.evercodes.adventureworks.presentation.dto.PersonResponse;
+import com.evercodes.adventureworks.application.dto.PersonRequest;
+import com.evercodes.adventureworks.application.dto.PersonResponse;
 
 import java.util.List;
 

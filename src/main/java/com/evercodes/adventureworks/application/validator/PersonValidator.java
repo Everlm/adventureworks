@@ -1,7 +1,7 @@
 package com.evercodes.adventureworks.application.validator;
 
 import br.com.fluentvalidator.AbstractValidator;
-import com.evercodes.adventureworks.presentation.dto.PersonRequest;
+import com.evercodes.adventureworks.application.dto.PersonRequest;
 
 import static br.com.fluentvalidator.predicate.LogicalPredicate.not;
 import static br.com.fluentvalidator.predicate.ObjectPredicate.nullValue;
