@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonEntity {
+public class PersonEntity 
+{
 
     @Id
     @Column(name = "BusinessEntityID")
@@ -41,4 +42,7 @@ public class PersonEntity {
 
     @Column(name = "EmailPromotion")
     private int emailPromotion;
+
+    @OneToOne(mappedBy = "person", fetch = FetchType.LAZY)
+    private EmployeeEntity employee;
 }
