@@ -2,10 +2,8 @@ package com.evercodes.adventureworks.application.service;
 
 import com.evercodes.adventureworks.application.commons.Result;
 import com.evercodes.adventureworks.application.dto.ColombiaMapResponse;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
+import com.evercodes.adventureworks.infrastructure.client.ColombiaApiClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 import java.util.List;
@@ -13,24 +11,15 @@ import java.util.List;
 @Service
 public class ColombiaMapService {
 
-    private static final String MAP_PATH = "/Map";
+    private final ColombiaApiClient client;
 
-    private final String baseUrl;
-
-    public ColombiaMapService(@Value("${api.colombia.base-url}") String baseUrl) {
-        this.baseUrl = baseUrl;
+    public ColombiaMapService(ColombiaApiClient client) {
+        this.client = client;
     }
 
     public Result<List<ColombiaMapResponse>> findAll() {
         try {
-            RestClient restClient = RestClient.builder()
-                    .baseUrl(baseUrl)
-                    .build();
-
-            List<ColombiaMapResponse> maps = restClient.get()
-                    .uri(MAP_PATH)
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<>() {});
+            List<ColombiaMapResponse> maps = client.getMaps();
 
             if (maps == null) {
                 return Result.ServiceUnavailable("The external maps API returned no data");
@@ -38,9 +27,7 @@ public class ColombiaMapService {
 
             return Result.Success(maps, maps.size());
         } catch (RestClientException ex) {
-            return Result.ServiceUnavailable("Unable to retrieve maps from external API: " + ex.getMessage());
-        } catch (RuntimeException ex) {
-            return Result.ServiceUnavailable("Unexpected error while retrieving maps: " + ex.getMessage());
+            return Result.ServiceUnavailable("Unable to retrieve maps from external API");
         }
     }
 }
