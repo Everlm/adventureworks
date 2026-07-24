@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AdventureworksApplication<adventureworks>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.evercodes.adventureworks.AdventureworksApplication",
+            "projectName": "adventureworks",
+            "console": "internalConsole",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "Started .* in .* seconds",
+                "uriFormat": "http://localhost:8080/swagger-ui/index.html#/"
+            },
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
