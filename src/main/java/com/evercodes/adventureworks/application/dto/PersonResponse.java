@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PersonResponse 
 {
-
     private Integer businessEntityId;
     private PersonType personType;
     private String title;
