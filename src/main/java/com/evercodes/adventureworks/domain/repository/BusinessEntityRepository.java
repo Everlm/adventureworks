@@ -5,4 +5,6 @@ import com.evercodes.adventureworks.domain.model.BusinessEntity;
 public interface BusinessEntityRepository {
 
     BusinessEntity save(BusinessEntity businessEntity);
+
+    void deleteById(Integer businessEntityId);
 }

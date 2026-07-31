@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import java.util.Optional;
 
 @Repository
@@ -23,7 +24,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     @Override
     public List<Person> findAll(int limit) {
-        return jpaRepository.findAll(PageRequest.of(0, limit)).stream()
+        return jpaRepository.findAll(PageRequest.of(0, limit, Sort.by("businessEntityId"))).stream()
                 .map(personEntityMapper::toDomain)
                 .toList();
     }

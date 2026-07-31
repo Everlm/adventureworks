@@ -26,9 +26,10 @@ public class PersonController {
 
     @Operation(summary = "findAll", description = "Obtiene una lista de personas")
     @GetMapping
-    public ResponseEntity<Result<List<PersonResponse>>> findAll() 
+    public ResponseEntity<Result<List<PersonResponse>>> findAll(
+            @RequestParam(defaultValue = "200") int limit) 
     {
-        return ResultExtensions.toResponseEntity(personService.findAll());
+        return ResultExtensions.toResponseEntity(personService.findAll(limit));
     }
 
     @Operation(summary = "findById", description = "Obtiene una persona por ID")

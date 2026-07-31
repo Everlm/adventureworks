@@ -20,4 +20,9 @@ public class BusinessEntityRepositoryImpl implements BusinessEntityRepository {
         BusinessEntityEntity saved = jpaRepository.save(entity);
         return new BusinessEntity(saved.getBusinessEntityId());
     }
+
+    @Override
+    public void deleteById(Integer businessEntityId) {
+        jpaRepository.deleteById(businessEntityId);
+    }
 }

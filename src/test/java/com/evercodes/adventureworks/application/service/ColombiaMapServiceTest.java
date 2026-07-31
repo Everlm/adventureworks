@@ -31,10 +31,10 @@ class ColombiaMapServiceTest {
 
         Result<List<ColombiaMapResponse>> result = service.findAll();
 
-        assertTrue(result.isEsExito());
-        assertEquals(ResultType.Success, result.getTipo());
-        assertEquals(2, result.getRegistrosTotales());
-        assertEquals(2, result.getDatos().size());
+        assertTrue(result.isSuccess());
+        assertEquals(ResultType.Success, result.getType());
+        assertEquals(2, result.getTotalRecords());
+        assertEquals(2, result.getData().size());
     }
 
     @Test
@@ -50,8 +50,8 @@ class ColombiaMapServiceTest {
 
         Result<List<ColombiaMapResponse>> result = service.findAll();
 
-        assertFalse(result.isEsExito());
-        assertEquals(ResultType.ServiceUnavailable, result.getTipo());
-        assertEquals("Unable to retrieve maps from external API", result.getMensajeError());
+        assertFalse(result.isSuccess());
+        assertEquals(ResultType.ServiceUnavailable, result.getType());
+        assertEquals("Unable to retrieve maps from external API", result.getMessage());
     }
 }

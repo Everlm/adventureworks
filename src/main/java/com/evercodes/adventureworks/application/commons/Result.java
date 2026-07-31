@@ -9,132 +9,132 @@ import java.util.List;
 public class Result<T> 
 {
 
-    private boolean esExito;
-    private T datos;
-    private int registrosTotales;
-    private String mensajeError;
-    private List<String> errores;
-    private ResultType tipo;
+    private boolean success;
+    private T data;
+    private int totalRecords;
+    private String message;
+    private List<String> errors;
+    private ResultType type;
 
     private Result() 
     {
     }
 
-    public static <T> Result<T> Success(T datos, int registrosTotales) 
+    public static <T> Result<T> Success(T data, int totalRecords) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(true);
-        result.setDatos(datos);
-        result.setRegistrosTotales(registrosTotales);
-        result.setTipo(ResultType.Success);
+        result.setSuccess(true);
+        result.setData(data);
+        result.setTotalRecords(totalRecords);
+        result.setType(ResultType.Success);
         return result;
     }
 
-    public static <T> Result<T> Success(T datos) 
+    public static <T> Result<T> Success(T data) 
     {
-        return Success(datos, 0);
+        return Success(data, 0);
     }
 
-    public static <T> Result<T> Success(T datos, String mensaje) 
+    public static <T> Result<T> Success(T data, String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(true);
-        result.setDatos(datos);
-        result.setMensajeError(mensaje);
-        result.setTipo(ResultType.Success);
+        result.setSuccess(true);
+        result.setData(data);
+        result.setMessage(message);
+        result.setType(ResultType.Success);
         return result;
     }
 
-    public static <T> Result<T> NotFound(String mensajeError) 
+    public static <T> Result<T> NotFound(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setTipo(ResultType.NotFound);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setType(ResultType.NotFound);
         return result;
     }
 
-    public static <T> Result<T> BadRequest(String mensajeError) 
+    public static <T> Result<T> BadRequest(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setTipo(ResultType.BadRequest);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setType(ResultType.BadRequest);
         return result;
     }
 
-    public static <T> Result<T> Invalid(String mensajeError) 
+    public static <T> Result<T> Invalid(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setTipo(ResultType.Invalid);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setType(ResultType.Invalid);
         return result;
     }
 
-    public static <T> Result<T> ValidationError(String mensajeError, List<String> errores) 
+    public static <T> Result<T> ValidationError(String message, List<String> errors) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setErrores(errores);
-        result.setTipo(ResultType.ValidationError);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setErrors(errors);
+        result.setType(ResultType.ValidationError);
         return result;
     }
 
-    public static <T> Result<T> Error(String mensajeError) 
+    public static <T> Result<T> Error(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setTipo(ResultType.Error);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setType(ResultType.Error);
         return result;
     }
 
-    public static <T> Result<T> NoContent(String mensaje) 
+    public static <T> Result<T> NoContent(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(true);
-        result.setTipo(ResultType.NoContent);
-        result.setMensajeError(mensaje);
-        result.setDatos(null);
-        result.setRegistrosTotales(0);
+        result.setSuccess(true);
+        result.setType(ResultType.NoContent);
+        result.setMessage(message);
+        result.setData(null);
+        result.setTotalRecords(0);
         return result;
     }
 
-    public static <T> Result<T> Unauthorized(String mensajeError) 
+    public static <T> Result<T> Unauthorized(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setTipo(ResultType.Unauthorized);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setType(ResultType.Unauthorized);
         return result;
     }
 
-    public static <T> Result<T> Forbidden(String mensajeError) 
+    public static <T> Result<T> Forbidden(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setTipo(ResultType.Forbidden);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setType(ResultType.Forbidden);
         return result;
     }
 
-    public static <T> Result<T> Conflict(String mensajeError) 
+    public static <T> Result<T> Conflict(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setTipo(ResultType.Conflict);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setType(ResultType.Conflict);
         return result;
     }
 
-    public static <T> Result<T> ServiceUnavailable(String mensajeError) 
+    public static <T> Result<T> ServiceUnavailable(String message) 
     {
         Result<T> result = new Result<>();
-        result.setEsExito(false);
-        result.setMensajeError(mensajeError);
-        result.setTipo(ResultType.ServiceUnavailable);
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setType(ResultType.ServiceUnavailable);
         return result;
     }
 }

@@ -11,7 +11,7 @@ public class ResultExtensions {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        return switch (result.getTipo()) {
+        return switch (result.getType()) {
             case Success -> ResponseEntity.ok(result);
             case NotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
             case BadRequest, Invalid, ValidationError -> ResponseEntity.badRequest().body(result);

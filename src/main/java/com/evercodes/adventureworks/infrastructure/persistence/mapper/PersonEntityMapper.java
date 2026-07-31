@@ -31,5 +31,6 @@ public interface PersonEntityMapper {
     @Mapping(source = "lastName", target = "lastName")
     @Mapping(source = "suffix", target = "suffix")
     @Mapping(source = "emailPromotion", target = "emailPromotion")
+    @Mapping(target = "employee", ignore = true)
     PersonEntity toEntity(Person person);
 }

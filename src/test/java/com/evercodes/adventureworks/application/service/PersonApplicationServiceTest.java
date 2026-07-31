@@ -23,135 +23,140 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PersonApplicationServiceTest {
 
+    private PersonApplicationService newService(PersonRepository personRepository,
+                                                BusinessEntityRepository businessEntityRepository) {
+        return new PersonApplicationService(
+                personRepository,
+                businessEntityRepository,
+                new InMemoryPersonMapper(),
+                new PersonValidator()
+        );
+    }
+
     @Test
     void findAllShouldReturnMappedPeople() {
         PersonRepository personRepository = new InMemoryPersonRepository();
-        BusinessEntityRepository businessEntityRepository = businessEntity -> businessEntity;
-        PersonMapper personMapper = new InMemoryPersonMapper();
-        PersonValidator personValidator = new PersonValidator();
+        BusinessEntityRepository businessEntityRepository = new InMemoryBusinessEntityRepository();
 
-        PersonApplicationService service = new PersonApplicationService(
-                personRepository,
-                businessEntityRepository,
-                personMapper,
-                personValidator
-        );
+        PersonApplicationService service = newService(personRepository, businessEntityRepository);
 
-        Result<List<PersonResponse>> result = service.findAll();
+        Result<List<PersonResponse>> result = service.findAll(200);
 
-        assertTrue(result.isEsExito());
-        assertEquals(ResultType.Success, result.getTipo());
-        assertEquals(1, result.getRegistrosTotales());
-        assertEquals("John", result.getDatos().get(0).getFirstName());
+        assertTrue(result.isSuccess());
+        assertEquals(ResultType.Success, result.getType());
+        assertEquals(1, result.getTotalRecords());
+        assertEquals("John", result.getData().get(0).getFirstName());
     }
 
     @Test
     void findByIdShouldReturnNotFoundWhenPersonIsMissing() {
         PersonRepository personRepository = new InMemoryPersonRepository();
-        BusinessEntityRepository businessEntityRepository = businessEntity -> businessEntity;
-        PersonMapper personMapper = new InMemoryPersonMapper();
-        PersonValidator personValidator = new PersonValidator();
+        BusinessEntityRepository businessEntityRepository = new InMemoryBusinessEntityRepository();
 
-        PersonApplicationService service = new PersonApplicationService(
-                personRepository,
-                businessEntityRepository,
-                personMapper,
-                personValidator
-        );
+        PersonApplicationService service = newService(personRepository, businessEntityRepository);
 
         Result<PersonResponse> result = service.findById(999);
 
-        assertFalse(result.isEsExito());
-        assertEquals(ResultType.NotFound, result.getTipo());
+        assertFalse(result.isSuccess());
+        assertEquals(ResultType.NotFound, result.getType());
     }
 
     @Test
     void saveShouldReturnValidationErrorWhenRequestIsInvalid() {
         PersonRepository personRepository = new InMemoryPersonRepository();
-        BusinessEntityRepository businessEntityRepository = businessEntity -> businessEntity;
-        PersonMapper personMapper = new InMemoryPersonMapper();
-        PersonValidator personValidator = new PersonValidator();
+        BusinessEntityRepository businessEntityRepository = new InMemoryBusinessEntityRepository();
 
-        PersonApplicationService service = new PersonApplicationService(
-                personRepository,
-                businessEntityRepository,
-                personMapper,
-                personValidator
-        );
+        PersonApplicationService service = newService(personRepository, businessEntityRepository);
 
         Result<PersonResponse> result = service.save(new PersonRequest());
 
-        assertFalse(result.isEsExito());
-        assertEquals(ResultType.ValidationError, result.getTipo());
+        assertFalse(result.isSuccess());
+        assertEquals(ResultType.ValidationError, result.getType());
     }
 
     @Test
     void saveShouldPersistAndReturnResponseWhenRequestIsValid() {
         InMemoryPersonRepository personRepository = new InMemoryPersonRepository();
-        BusinessEntityRepository businessEntityRepository = businessEntity -> new BusinessEntity(77);
-        PersonMapper personMapper = new InMemoryPersonMapper();
-        PersonValidator personValidator = new PersonValidator();
+        InMemoryBusinessEntityRepository businessEntityRepository = new InMemoryBusinessEntityRepository();
 
-        PersonApplicationService service = new PersonApplicationService(
-                personRepository,
-                businessEntityRepository,
-                personMapper,
-                personValidator
-        );
+        PersonApplicationService service = newService(personRepository, businessEntityRepository);
 
         PersonRequest request = new PersonRequest(PersonType.EM, null, "Maria", null, "Lopez", null);
 
         Result<PersonResponse> result = service.save(request);
 
-        assertTrue(result.isEsExito());
-        assertEquals(ResultType.Success, result.getTipo());
-        assertEquals(77, result.getDatos().getBusinessEntityId());
-        assertEquals("Maria", result.getDatos().getFirstName());
+        assertTrue(result.isSuccess());
+        assertEquals(ResultType.Success, result.getType());
+        assertEquals(1, businessEntityRepository.createdEntities.size());
+        assertEquals(100, result.getData().getBusinessEntityId());
+        assertEquals("Maria", result.getData().getFirstName());
         assertEquals(2, personRepository.savedPeople.size());
     }
 
     @Test
-    void updateShouldReturnNoContentWhenPersonExistsAndRequestIsValid() {
-        InMemoryPersonRepository personRepository = new InMemoryPersonRepository();
-        BusinessEntityRepository businessEntityRepository = businessEntity -> businessEntity;
-        PersonMapper personMapper = new InMemoryPersonMapper();
-        PersonValidator personValidator = new PersonValidator();
+    void updateShouldReturnSuccessWhenPersonExistsAndRequestIsValid() {
+        PersonRepository personRepository = new InMemoryPersonRepository();
+        BusinessEntityRepository businessEntityRepository = new InMemoryBusinessEntityRepository();
 
-        PersonApplicationService service = new PersonApplicationService(
-                personRepository,
-                businessEntityRepository,
-                personMapper,
-                personValidator
-        );
+        PersonApplicationService service = newService(personRepository, businessEntityRepository);
 
         PersonRequest request = new PersonRequest(PersonType.EM, "Mr.", "John", null, "Updated", null);
 
         Result<PersonResponse> result = service.update(1, request);
 
-        assertTrue(result.isEsExito());
-        assertEquals(ResultType.Success, result.getTipo());
-        assertEquals("Updated", result.getDatos().getLastName());
+        assertTrue(result.isSuccess());
+        assertEquals(ResultType.Success, result.getType());
+        assertEquals("Updated", result.getData().getLastName());
     }
 
     @Test
     void deleteByIdShouldReturnNoContentWhenPersonExists() {
         InMemoryPersonRepository personRepository = new InMemoryPersonRepository();
-        BusinessEntityRepository businessEntityRepository = businessEntity -> businessEntity;
-        PersonMapper personMapper = new InMemoryPersonMapper();
-        PersonValidator personValidator = new PersonValidator();
+        InMemoryBusinessEntityRepository businessEntityRepository = new InMemoryBusinessEntityRepository();
 
-        PersonApplicationService service = new PersonApplicationService(
-                personRepository,
-                businessEntityRepository,
-                personMapper,
-                personValidator
-        );
+        PersonApplicationService service = newService(personRepository, businessEntityRepository);
 
         Result<Void> result = service.deleteById(1);
 
-        assertTrue(result.isEsExito());
-        assertEquals(ResultType.NoContent, result.getTipo());
+        assertTrue(result.isSuccess());
+        assertEquals(ResultType.NoContent, result.getType());
         assertEquals(0, personRepository.savedPeople.size());
+    }
+
+    @Test
+    void deleteByIdShouldDeleteAssociatedBusinessEntity() {
+        InMemoryPersonRepository personRepository = new InMemoryPersonRepository();
+        InMemoryBusinessEntityRepository businessEntityRepository = new InMemoryBusinessEntityRepository();
+        businessEntityRepository.createdEntities.add(new BusinessEntity(1));
+
+        PersonApplicationService service = newService(personRepository, businessEntityRepository);
+
+        Result<Void> result = service.deleteById(1);
+
+        assertTrue(result.isSuccess());
+        assertEquals(ResultType.NoContent, result.getType());
+        assertEquals(0, personRepository.savedPeople.size());
+        assertTrue(businessEntityRepository.deletedIds.contains(1));
+    }
+
+    private static class InMemoryBusinessEntityRepository implements BusinessEntityRepository {
+
+        private final List<BusinessEntity> createdEntities = new ArrayList<>();
+        private final List<Integer> deletedIds = new ArrayList<>();
+        private int nextId = 100;
+
+        @Override
+        public BusinessEntity save(BusinessEntity businessEntity) {
+            businessEntity.setBusinessEntityId(nextId++);
+            createdEntities.add(businessEntity);
+            return businessEntity;
+        }
+
+        @Override
+        public void deleteById(Integer businessEntityId) {
+            deletedIds.add(businessEntityId);
+            createdEntities.removeIf(entity -> entity.getBusinessEntityId().equals(businessEntityId));
+        }
     }
 
     private static class InMemoryPersonRepository implements PersonRepository {

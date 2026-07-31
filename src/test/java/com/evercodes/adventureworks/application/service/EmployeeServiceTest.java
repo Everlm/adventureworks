@@ -25,10 +25,10 @@ class EmployeeServiceTest {
 
         Result<PersonEmployeeResponse> result = service.findByNationalIdNumber("123");
 
-        assertTrue(result.isEsExito());
-        assertEquals(ResultType.Success, result.getTipo());
-        assertEquals("Ana", result.getDatos().getFirstName());
-        assertEquals("Developer", result.getDatos().getJobTitle());
+        assertTrue(result.isSuccess());
+        assertEquals(ResultType.Success, result.getType());
+        assertEquals("Ana", result.getData().getFirstName());
+        assertEquals("Developer", result.getData().getJobTitle());
     }
 
     @Test
@@ -39,8 +39,8 @@ class EmployeeServiceTest {
 
         Result<PersonEmployeeResponse> result = service.findByNationalIdNumber("999");
 
-        assertFalse(result.isEsExito());
-        assertEquals(ResultType.NotFound, result.getTipo());
-        assertEquals("Employee not found with NationalIDNumber: 999", result.getMensajeError());
+        assertFalse(result.isSuccess());
+        assertEquals(ResultType.NotFound, result.getType());
+        assertEquals("Employee not found with NationalIDNumber: 999", result.getMessage());
     }
 }

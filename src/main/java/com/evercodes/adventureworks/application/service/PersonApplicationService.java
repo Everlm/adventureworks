@@ -1,6 +1,5 @@
 package com.evercodes.adventureworks.application.service;
 
-import br.com.fluentvalidator.Validator;
 import lombok.RequiredArgsConstructor;
 
 import com.evercodes.adventureworks.application.commons.Result;
@@ -15,10 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
-// @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class PersonApplicationService 
 {
 
@@ -27,18 +26,9 @@ public class PersonApplicationService
     private final PersonMapper personMapper;
     private final PersonValidator personValidator;
 
-    public PersonApplicationService(PersonRepository personRepository, BusinessEntityRepository businessEntityRepository, PersonMapper personMapper,
-        PersonValidator personValidator) 
+    public Result<List<PersonResponse>> findAll(int limit) 
     {
-        this.personRepository = personRepository;
-        this.businessEntityRepository = businessEntityRepository;
-        this.personMapper = personMapper;
-        this.personValidator = personValidator;
-    }
-
-    public Result<List<PersonResponse>> findAll() 
-    {
-        var persons = personRepository.findAll(200);
+        var persons = personRepository.findAll(limit);
         var response = personMapper.toResponseList(persons);
         return Result.Success(response, response.size());
     }
@@ -58,15 +48,10 @@ public class PersonApplicationService
     @Transactional
     public Result<PersonResponse> save(PersonRequest request) 
     {
-        var validationResult = personValidator.validate(request);
+        var validationErrors = validateAndGetErrors(request);
 
-        if (!validationResult.isValid()) {
-            
-            var errors = validationResult.getErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getMessage())
-                    .collect(Collectors.toList());
-
-            return Result.ValidationError("Validation failed", errors);
+        if (validationErrors.isPresent()) {
+            return Result.ValidationError("Validation failed", validationErrors.get());
         }
 
         var businessEntity = businessEntityRepository.save(new BusinessEntity());
@@ -82,15 +67,10 @@ public class PersonApplicationService
     @Transactional
     public Result<PersonResponse> update(Integer id, PersonRequest request) 
     {
-        var validationResult = personValidator.validate(request);
+        var validationErrors = validateAndGetErrors(request);
 
-        if (!validationResult.isValid()) {
-            
-            var errors = validationResult.getErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getMessage())
-                    .collect(Collectors.toList());
-            
-            return Result.ValidationError("Validation failed", errors);
+        if (validationErrors.isPresent()) {
+            return Result.ValidationError("Validation failed", validationErrors.get());
         }
 
         var person = personRepository.findById(id);
@@ -107,6 +87,7 @@ public class PersonApplicationService
         return Result.Success(response);
     }
 
+    @Transactional
     public Result<Void> deleteById(Integer id) 
     {    
         var person = personRepository.findById(id);
@@ -116,9 +97,23 @@ public class PersonApplicationService
         }
 
         personRepository.deleteById(id);
+        businessEntityRepository.deleteById(person.get().getBusinessEntityId());
 
         return Result.NoContent("Person deleted successfully");
     }
 
-   
+    private Optional<List<String>> validateAndGetErrors(PersonRequest request) 
+    {
+        var validationResult = personValidator.validate(request);
+
+        if (validationResult.isValid()) {
+            return Optional.empty();
+        }
+
+        var errors = validationResult.getErrors().stream()
+                .map(error -> error.getField() + ": " + error.getMessage())
+                .toList();
+
+        return Optional.of(errors);
+    }
 }

@@ -2,6 +2,7 @@ package com.evercodes.adventureworks.presentation.exception;
 
 import com.evercodes.adventureworks.application.commons.Result;
 import com.evercodes.adventureworks.presentation.extension.ResultExtensions;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,9 +33,15 @@ public class GlobalExceptionHandler {
         return ResultExtensions.toResponseEntity(result);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Result<Void>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        Result<Void> result = Result.Conflict("Data integrity violation: " + ex.getMostSpecificCause().getMessage());
+        return ResultExtensions.toResponseEntity(result);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Result<Void>> handleRuntime(RuntimeException ex) {
-        Result<Void> result = Result.NotFound(ex.getMessage());
+        Result<Void> result = Result.Error(ex.getMessage());
         return ResultExtensions.toResponseEntity(result);
     }
 }
